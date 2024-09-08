@@ -3,7 +3,25 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
+from django.core.paginator import Paginator
+from django.contrib.auth.decorators import user_passes_test
+from django.utils.decorators import method_decorator
 from .models import Estudiante, Libro, Prestamo
+from.forms import *
+
+def group_required(rol):
+    """
+    Función auxiliar para verificar si el usuario pertenece a un grupo específico.
+    """
+    def in_group(user):
+        roles = list(user.groups.values_list('name', flat=True))
+        if "administrador" in roles:
+            return True
+        
+        print(roles)
+        return rol in roles
+    
+    return user_passes_test(in_group)
 
 # Listar estudiantes
 class EstudianteListView(ListView):
@@ -13,16 +31,12 @@ class EstudianteListView(ListView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = self.request.user
-        context['role'] = None
-        grupos = list(user.groups.values_list('name', flat=True))
-        if "administrador" in grupos:
-            context['role'] = "administrador"
-        elif "directivo" in grupos:
-            context['role'] = "directivo"
-        elif "bibliotecario" in grupos:
-            context['role'] = "bibliotecario"
-            
+        estudiantes = Estudiante.objects.all()
+        paginator = Paginator(estudiantes, 10)
+        page = self.request.GET.get("page")
+        estudiantes = paginator.get_page(page)
+        context["estudiantes"] = estudiantes
+        
         return context
 
 # Detalles de un estudiante
@@ -31,34 +45,23 @@ class EstudianteDetailView(DetailView):
     template_name = 'estudiante_detail.html'
 
 # Crear un nuevo estudiante
+@method_decorator(group_required('directivo'), name='dispatch')
 class EstudianteCreateView(CreateView):
     model = Estudiante
     template_name = 'form.html'
-    fields = ['nombre', 'apellidos', 'edad', 'anno_academico', 'CI', 'telefono']
+    form_class = EstudianteForm
     success_url = reverse_lazy('estudiante-list')
 
 # Actualizar un estudiante
+@method_decorator(group_required('directivo'), name='dispatch')
 class EstudianteUpdateView(UpdateView):
     model = Estudiante
     template_name = 'form.html'
-    fields = ['nombre', 'apellidos', 'edad', 'anno_academico', 'CI', 'telefono']
+    form_class = EstudianteForm
     success_url = reverse_lazy('estudiante-list')
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
-        context['role'] = None
-        grupos = list(user.groups.values_list('name', flat=True))
-        if "administrador" in grupos:
-            context['role'] = "administrador"
-        elif "directivo" in grupos:
-            context['role'] = "directivo"
-        elif "bibliotecario" in grupos:
-            context['role'] = "bibliotecario"
-            
-        return context
-
 # Eliminar un estudiante
+@method_decorator(group_required('directivo'), name='dispatch')
 class EstudianteDeleteView(DeleteView):
     model = Estudiante
     template_name = 'estudiante_confirm_delete.html'
@@ -74,15 +77,11 @@ class LibroListView(ListView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = self.request.user
-        context['role'] = None
-        grupos = list(user.groups.values_list('name', flat=True))
-        if "administrador" in grupos:
-            context['role'] = "administrador"
-        elif "directivo" in grupos:
-            context['role'] = "directivo"
-        elif "bibliotecario" in grupos:
-            context['role'] = "bibliotecario"
+        libros = Libro.objects.all()
+        paginator = Paginator(libros, 10)
+        page = self.request.GET.get("page")
+        libros = paginator.get_page(page)
+        context["libros"] = libros
             
         return context
 
@@ -92,34 +91,23 @@ class LibroDetailView(DetailView):
     template_name = 'libro_detail.html'
 
 # Crear un nuevo libro
+@method_decorator(group_required('bibliotecario'), name='dispatch')
 class LibroCreateView(CreateView):
     model = Libro
     template_name = 'form.html'
-    fields = ['titulo', 'categoria', 'cantidad_disponible', 'cantidad_prestada', 'autor', 'editorial', 'descripcion']
+    form_class = LibroForm
     success_url = reverse_lazy('libro-list')
 
 # Actualizar un libro
+@method_decorator(group_required('bibliotecario'), name='dispatch')
 class LibroUpdateView(UpdateView):
     model = Libro
     template_name = 'form.html'
-    fields = ['titulo', 'categoria', 'cantidad_disponible', 'cantidad_prestada', 'autor', 'editorial', 'descripcion']
+    form_class = LibroForm
     success_url = reverse_lazy('libro-list')
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
-        context['role'] = None
-        grupos = list(user.groups.values_list('name', flat=True))
-        if "administrador" in grupos:
-            context['role'] = "administrador"
-        elif "directivo" in grupos:
-            context['role'] = "directivo"
-        elif "bibliotecario" in grupos:
-            context['role'] = "bibliotecario"
-            
-        return context
-
 # Eliminar un libro
+@method_decorator(group_required('bibliotecario'), name='dispatch')
 class LibroDeleteView(DeleteView):
     model = Libro
     template_name = 'libro_confirm_delete.html'
@@ -135,15 +123,11 @@ class PrestamoListView(ListView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = self.request.user
-        context['role'] = None
-        grupos = list(user.groups.values_list('name', flat=True))
-        if "administrador" in grupos:
-            context['role'] = "administrador"
-        elif "directivo" in grupos:
-            context['role'] = "directivo"
-        elif "bibliotecario" in grupos:
-            context['role'] = "bibliotecario"
+        prestamos = Prestamo.objects.all()
+        paginator = Paginator(prestamos, 10)
+        page = self.request.GET.get("page")
+        prestamos = paginator.get_page(page)
+        context["prestamos"] = prestamos
             
         return context
 
@@ -153,41 +137,30 @@ class PrestamoDetailView(DetailView):
     template_name = 'prestamo_detail.html'
 
 # Crear un nuevo préstamo
+@method_decorator(group_required('bibliotecario'), name='dispatch')
 class PrestamoCreateView(CreateView):
     model = Prestamo
     template_name = 'form.html'
-    fields = ['fecha', 'estudiante', 'libro']
+    form_class = PrestamoForm
     success_url = reverse_lazy('prestamo-list')
 
 # Actualizar un préstamo
+@method_decorator(group_required('bibliotecario'), name='dispatch')
 class PrestamoUpdateView(UpdateView):
     model = Prestamo
     template_name = 'form.html'
-    fields = ['fecha', 'estudiante', 'libro']
+    form_class = PrestamoForm
     success_url = reverse_lazy('prestamo-list')
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
-        context['role'] = None
-        grupos = list(user.groups.values_list('name', flat=True))
-        if "administrador" in grupos:
-            context['role'] = "administrador"
-        elif "directivo" in grupos:
-            context['role'] = "directivo"
-        elif "bibliotecario" in grupos:
-            context['role'] = "bibliotecario"
-            
-        return context
-
 # Eliminar un préstamo
+@method_decorator(group_required('bibliotecario'), name='dispatch')
 class PrestamoDeleteView(DeleteView):
     model = Prestamo
     template_name = 'prestamo_confirm_delete.html'
     success_url = reverse_lazy('prestamo-list')
 
 
-#=====================================================LOGIN=====================================================
+#=====================================================EXTRA=====================================================
 def user_login(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
@@ -197,4 +170,4 @@ def user_login(request):
             return redirect('libro-list')
     else:
         form = AuthenticationForm()
-    return render(request, 'app/login.html', {'form': form})
+    return render(request, 'accounts/login.html', {'form': form})

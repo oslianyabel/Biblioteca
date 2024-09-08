@@ -2,6 +2,17 @@
 
 {% block content %}
 
+<style>
+    ul.errorlist {
+        color: red;
+        list-style-type: none;
+        padding-left: 0;
+    }
+    ul.errorlist li {
+        margin-bottom: 5px;
+    }
+</style>
+
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -11,8 +22,8 @@
                     <form method="POST">
                         {% csrf_token %}
                         {{ form.as_p }}
-                        <div class="d-flex justify-content-between mt-4">
-                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary w-100">Guardar</button>
                         </div>
                     </form>
                 </div>

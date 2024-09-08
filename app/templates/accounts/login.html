@@ -5,12 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar sesión</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        :root {
+            --color-primario: #161a17;
+            --color-secundario: #324440;
+            --color-terciario: #dbe4e2;
+            --color-cuarto: #cb9e9d;
+        }
+        body {
+            background-color: var(--color-terciario);
+            background-image: url(../../static/app/images/fondo1.jpg);
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+        }
+        @media (max-width: 767px) { /* Para dispositivos móviles */
+            body {
+                background-image: url(../../static/app/images/fondo2.jpg);
+                background-repeat: repeat;
+            }
+        }
+        .btn-color {
+            background-color: var(--color-secundario);
+            color: var(--color-terciario);
+        }
+        .btn-color:hover {
+            background-color: var(--color-cuarto);
+            color: var(--color-primario);
+        }
+        @font-face {
+            font-family: Ubuntu;
+            src: url(../../static/app/fonts/ubuntu/Ubuntu-Regular.ttf)
+        }
+        @font-face {
+            font-family: ADLaM_Display;
+            src: url(../../static/app/fonts/ADLaM_Display/ADLaMDisplay-Regular.ttf)
+        }
+        * {
+            font-family: ADLaM_Display, Ubuntu;
+            font-weight: 400;
+            color: var(--color-terciario);
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
         <div class="row justify-content-center">
-            <div class="col-md-6">
-                <h2 class="text-center">Iniciar sesión</h2>
+            <div class="col-md-4">
+                <h2 class="text-center">Iniciar Sesión</h2>
                 <form method="post" class="mt-4">
                     {% csrf_token %}
                     <div class="form-group">
@@ -21,7 +63,7 @@
                         <label for="{{ form.password.id_for_label }}" class="form-label">Contraseña</label>
                         <input type="password" name="{{ form.password.name }}" id="{{ form.password.id_for_label }}" class="form-control" value="{{ form.password.value|default_if_none:'' }}">
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block">Iniciar sesión</button>
+                    <button type="submit" class="btn btn-color btn-block">Iniciar sesión</button>
                 </form>
                 {% if form.errors %}
                     <div class="alert alert-danger mt-3">

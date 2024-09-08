@@ -9,11 +9,50 @@
     <link rel="stylesheet" href="{% static 'app/font-awesome/css/all.css' %}">
     <link rel="stylesheet" href="{% static 'app/Bootstrap/css/bootstrap.css' %}">
     <style>
-        #nav-bar {
-            background-color: #343a40;
+        :root {
+            --color-primario: #161a17;
+            --color-secundario: #324440;
+            --color-terciario: #dbe4e2;
+            --color-cuarto: #cb9e9d;
+        }
+        body {
+            background-color: var(--color-terciario);
+        }
+        .primary-color {
+            background-color: var(--color-primario);
+            color: var(--color-terciario);
+        }
+        .secondary-color {
+            background-color: var(--color-secundario);
+            color: var(--color-terciario);
+        }
+        .btn-color {
+            background-color: var(--color-secundario);
+            color: var(--color-terciario);
+        }
+        .btn-color:hover {
+            background-color: var(--color-cuarto);
+            color: var(--color-primario);
+        }
+        p, b, a {  
+            color: var(--color-terciario);
+        }
+        a:hover {
+            color: var(--color-cuarto);
+        }
+        h1, h2, h3, h4 {
+            color: var(--color-primario);
         }
         .nav-link {
-            color: white !important;
+            color: var(--color-terciario);
+        }
+        footer {
+            margin-top: 50px;
+            padding: 30px 100px;
+            text-align: center;
+        }
+        footer b {
+            color: white;
         }
         @font-face {
             font-family: Ubuntu;
@@ -35,39 +74,24 @@
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light" id="nav-bar">
-        <a class="navbar-brand" href="#" style="color: white;"><i class="fas fa-book"></i> </a>
+    <nav class="navbar navbar-expand-lg primary-color" id="nav-bar">
+        <a class="navbar-brand" href="#"><i class="fas fa-book"></i> </a>
         <ul class="navbar-nav">
-            {% if user.is_authenticated %}
-                {% if role == 'bibliotecario' %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'libro-list' %}">Libros</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'prestamo-list' %}">Préstamos</a>
-                    </li>
-                {% elif role == 'directivo' %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'estudiante-list' %}">Estudiantes</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Lista Negra</a>
-                    </li>
-                {% elif role == 'administrador' %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'libro-list' %}">Libros</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'prestamo-list' %}">Préstamos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'estudiante-list' %}">Estudiantes</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Lista Negra</a>
-                    </li>
-                {% endif %}
-            {% endif %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'libro-list' %}">Libros</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'prestamo-list' %}">Préstamos</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'estudiante-list' %}">Estudiantes</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="#">Lista Negra</a>
+            </li>
         </ul>
     </nav>
 
@@ -76,6 +100,15 @@
         <!-- Aquí va el contenido específico de cada página -->
         {% endblock %}
     </div>
+
+    <footer class="primary-color">
+        <p>Desarrollado por: <b>Dianely Hernández Bernal</b></p>
+        <p>Universidad Tecnológica de La Habana “José Antonio Echeverría” <b>Cujae</b></p>
+        <p>Facultad de Ingeniería Informática</p>
+        <p>Filial 10 de Octubre</p>
+        <p>Sistema Web de Gestión de Préstamos</p>
+        <b>2024</b>
+    </footer>
 
     <script src="{% static 'app/Bootstrap/js/bootstrap.js' %}"></script>
 </body>

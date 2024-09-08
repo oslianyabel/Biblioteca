@@ -2,15 +2,15 @@ from django.db import models
 from django.core.validators import RegexValidator
 
 LIBRO_CATEGORIA = [
-    ("programacion", "Programacion"),
-    ("matematica", "Matematica"),
+    ("programacion", "Programación"),
+    ("matematica", "Matemática"),
     ("sistemas operativos", "Sistemas operativos"),
-    ("ingenieria de software", "Ingenieria de software"),
-    ("compilacion", "Compilacion"),
+    ("ingenieria de software", "Ingeniería de software"),
+    ("compilacion", "Compilación"),
     ("redes de computadoras", "Redes de computadoras"),
-    ("estadistica", "Estadistica"),
+    ("estadistica", "Estadística"),
     ("letras", "Letras"),
-    ("investigacion de operaciones", "Investigacion de operaciones"),
+    ("investigacion de operaciones", "Investigación de operaciones"),
     ("inteligencia artificial", "Inteligencia artificial"),
     ("bases de datos", "Bases de datos"),
 ]

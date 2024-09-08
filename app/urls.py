@@ -23,6 +23,7 @@ urlpatterns = [
     path('prestamos/<int:pk>/editar/', PrestamoUpdateView.as_view(), name='prestamo-update'),
     path('prestamos/<int:pk>/eliminar/', PrestamoDeleteView.as_view(), name='prestamo-delete'),
     
-    #Login
+    #Extra
     path('login/', user_login, name='login'),
+    path('accounts/login/', user_login, name='login'),
 ]
