@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prestamos de Libros</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="font-awesome/css/all.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand" href="#"><i class="fas fa-book"></i></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-item nav-link" href="estudiantes.html">Estudiantes<span
+                        class="sr-only">(current)</span></a>
+                <a class="nav-item nav-link active" href="#">Préstamos</a>
+                <a class="nav-item nav-link" href="libros.html">Libros</a>
+                <a class="nav-item nav-link" href="lista_negra.html">Lista Negra</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <table class="table table-striped" id="prestamosTable">
+            <button class="btn btn-outline-primary" type="button" data-toggle="collapse" data-target="#contenido"
+                aria-expanded="false" aria-controls="contenido">
+                Buscar <i class="fas fa-search"></i>
+            </button>
+            <div class="collapse" id="contenido">
+                <div class="card card-body">
+                    <form id="searchForm">
+                        <div class="form-row">
+                            <div class="col-md-3 mb-3">
+                                <label for="nombre">Nombre:</label>
+                                <input type="text" class="form-control" id="nombre"
+                                    placeholder="Ingrese el nombre del estudiante">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="apellido">Apellido:</label>
+                                <input type="text" class="form-control" id="apellido"
+                                    placeholder="Ingrese el apellido del estudiante">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="libro">Libro:</label>
+                                <input type="text" class="form-control" id="libro"
+                                    placeholder="Ingrese el nombre del libro">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="fecha">Fecha:</label>
+                                <input type="date" class="form-control" id="fecha">
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-md-center">
+                            <button type="submit" class="btn btn-success col-md-3 mr-2">Aceptar</button>
+                            <button type="reset" class="btn btn-secondary col-md-3">Resetear</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <thead>
+                <tr>
+                    <th>Nombre del Estudiante</th>
+                    <th>Apellido del Estudiante</th>
+                    <th>Título del libro</th>
+                    <th>Fecha del Préstamo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>José</td>
+                    <td>García Pérez</td>
+                    <td>Harry Potter y la Piedra Filosofal</td>
+                    <td>2024-03-08</td>
+                </tr>
+                <tr>
+                    <td>María</td>
+                    <td>Rodríguez López</td>
+                    <td>Cien años de soledad</td>
+                    <td>2024-03-07</td>
+                </tr>
+                <!-- Puedes agregar más filas según necesites -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+
+    <script>
+        // Capturar el evento submit del formulario
+        document.getElementById('searchForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Evitar que se recargue la página
+            // Obtener los valores de los campos de búsqueda
+            var nombre = document.getElementById('nombre').value.trim().toLowerCase();
+            var apellido = document.getElementById('apellido').value.trim().toLowerCase();
+            var libro = document.getElementById('libro').value.trim().toLowerCase();
+            var fecha = document.getElementById('fecha').value;
+            // Filtrar la tabla de préstamos
+            var prestamos = document.querySelectorAll('#prestamosTable tbody tr');
+            prestamos.forEach(function (prestamo) {
+                var mostrar = true;
+                // Comparar cada campo del préstamo con los valores de búsqueda
+                if (nombre && !prestamo.cells[0].textContent.trim().toLowerCase().includes(nombre)) {
+                    mostrar = false;
+                }
+                if (apellido && !prestamo.cells[1].textContent.trim().toLowerCase().includes(apellido)) {
+                    mostrar = false;
+                }
+                if (libro && !prestamo.cells[2].textContent.trim().toLowerCase().includes(libro)) {
+                    mostrar = false;
+                }
+                if (fecha && prestamo.cells[3].textContent.trim() !== fecha) {
+                    mostrar = false;
+                }
+                // Mostrar u ocultar el préstamo según el resultado del filtro
+                if (mostrar) {
+                    prestamo.style.display = '';
+                } else {
+                    prestamo.style.display = 'none';
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>

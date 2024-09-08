@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'app/font-awesome/css/all.css' %}">
+    <link rel="stylesheet" href="{% static 'app/Bootstrap/css/bootstrap.css' %}">
+    <style>
+        #nav-bar {
+            background-color: #343a40;
+        }
+        .nav-link {
+            color: white !important;
+        }
+        @font-face {
+            font-family: Ubuntu;
+            src: url(../../static/app/fonts/ubuntu/Ubuntu-Regular.ttf)
+        }
+        @font-face {
+            font-family: ADLaM_Display;
+            src: url(../../static/app/fonts/ADLaM_Display/ADLaMDisplay-Regular.ttf)
+        }
+        * {
+            font-family: ADLaM_Display, Ubuntu;
+            font-weight: 400;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light" id="nav-bar">
+        <a class="navbar-brand" href="#" style="color: white;"><i class="fas fa-book"></i> </a>
+        <ul class="navbar-nav">
+            {% if user.is_authenticated %}
+                {% if role == 'bibliotecario' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'libro-list' %}">Libros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'prestamo-list' %}">Préstamos</a>
+                    </li>
+                {% elif role == 'directivo' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'estudiante-list' %}">Estudiantes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Lista Negra</a>
+                    </li>
+                {% elif role == 'administrador' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'libro-list' %}">Libros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'prestamo-list' %}">Préstamos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'estudiante-list' %}">Estudiantes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Lista Negra</a>
+                    </li>
+                {% endif %}
+            {% endif %}
+        </ul>
+    </nav>
+
+    <div class="container">
+        {% block content %}
+        <!-- Aquí va el contenido específico de cada página -->
+        {% endblock %}
+    </div>
+
+    <script src="{% static 'app/Bootstrap/js/bootstrap.js' %}"></script>
+</body>
+</html>

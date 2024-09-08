@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="font-awesome/css/all.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand" href="#"><i class="fas fa-book"></i></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-item nav-link" href="estudiantes.html">Estudiantes<span
+                        class="sr-only">(current)</span></a>
+                <a class="nav-item nav-link" href="index.html">Préstamos</a>
+                <a class="nav-item nav-link" href="libros.html">Libros</a>
+                <a class="nav-item nav-link active" href="#">Lista Negra</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h2>Estudiantes en Lista Negra</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Apellidos</th>
+                    <th>Sexo</th>
+                    <th>CI</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>José</td>
+                    <td>García Pérez</td>
+                    <td>Masculino</td>
+                    <td>1234567</td>
+                    <td>
+                        <!-- Botón de procesamiento con icono -->
+                        <button type="button" class="btn btn-primary">
+                            Procesar
+                            <i class="fas fa-cogs ml-1"></i>
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>María</td>
+                    <td>Rodríguez López</td>
+                    <td>Femenino</td>
+                    <td>7654321</td>
+                    <td>
+                        <button type="button" class="btn btn-primary">
+                            Procesar
+                            <i class="fas fa-cogs ml-1"></i>
+                        </button>
+                    </td>
+                </tr>
+                <!-- Puedes agregar más filas según necesites -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+</body>
+
+</html>

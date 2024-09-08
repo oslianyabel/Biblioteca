@@ -1,0 +1,86 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center display-4" style="animation: pulse 1.5s 1; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);">
+        Préstamos
+    </h2>
+
+    <div class="text-right mb-3">
+        <a href="{% url 'prestamo-create' %}" class="btn btn-success">
+            <i class="fas fa-plus-circle"></i> Crear Préstamo
+        </a>
+    </div>
+
+    <!-- Formulario de búsqueda y filtrado -->
+    <form method="GET" class="form-inline mb-3">
+        <div class="row">
+            <div class="col-md-4">
+                <input type="text" name="buscar_estudiante" class="form-control" placeholder="Estudiante" value="{{ request.GET.buscar_estudiante }}">
+            </div>
+            <div class="col-md-4">
+                <input type="text" name="buscar_libro" class="form-control" placeholder="Libro" value="{{ request.GET.buscar_libro }}">
+            </div>
+            <div class="col-md-4">
+                <select name="ordenar_por" class="form-control">
+                    <option value="">Ordenar por</option>
+                    <option value="fecha" {% if request.GET.ordenar_por == 'fecha' %}selected{% endif %}>Fecha Ascendente</option>
+                    <option value="-fecha" {% if request.GET.ordenar_por == '-fecha' %}selected{% endif %}>Fecha Descendente</option>
+                </select>
+            </div>
+            <div class="col-md-12 text-center mt-3">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Buscar</button>
+                <a href="{% url 'prestamo-list' %}" class="btn btn-secondary"><i class="fas fa-redo-alt"></i> Reiniciar</a>
+            </div>
+        </div>
+    </form>
+
+    <!-- Tabla de préstamos -->
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Estudiante</th>
+                <th>Libro</th>
+                <th>Fecha de préstamo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for prestamo in prestamos %}
+            <tr>
+                <td>{{ prestamo.estudiante.nombre }} {{ prestamo.estudiante.apellido }}</td>
+                <td>{{ prestamo.libro.titulo }}</td>
+                <td>{{ prestamo.fecha }}</td>
+                <td>
+                    <a href="{% url 'prestamo-update' prestamo.id %}" class="btn btn-info btn-sm"><i class="fas fa-edit"></i></a>
+                    <a href="{% url 'prestamo-delete' prestamo.id %}" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">No hay préstamos registrados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Paginación -->
+    <div class="d-flex justify-content-center">
+        {% if is_paginated %}
+            <nav>
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a></li>
+                    {% endif %}
+                    {% for num in page_obj.paginator.page_range %}
+                        <li class="page-item {% if page_obj.number == num %}active{% endif %}"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

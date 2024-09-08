@@ -1,0 +1,104 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center display-4" style="animation: pulse 1.5s 1; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);">
+        Libros
+    </h2>
+
+    <!-- Botón para crear nuevo estudiante -->
+    <div class="text-right mb-3">
+        <a href="{% url 'libro-create' %}" class="btn btn-success">
+            <i class="fas fa-plus-circle"></i> Crear Libro
+        </a>
+    </div>
+    
+    <!-- Formulario de búsqueda y filtrado -->
+    <form method="GET" class="form-inline mb-3">
+        <div class="row">
+            <div class="col-md-4">
+                <input type="text" name="buscar_nombre" class="form-control" placeholder="Nombre" value="{{ request.GET.buscar_nombre }}">
+            </div>
+            <div class="col-md-4">
+                <select name="categoria" class="form-control">
+                    <option value="">Todas las categorías</option>
+                    {% for key, value in LIBRO_CATEGORIA %}
+                        <option value="{{ key }}" {% if request.GET.categoria == key %}selected{% endif %}>{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <select name="ordenar_por" class="form-control">
+                    <option value="">Ordenar por</option>
+                    <option value="cantidad_prestada" {% if request.GET.ordenar_por == 'cantidad_prestada' %}selected{% endif %}>Cantidad prestada</option>
+                    <option value="-cantidad_prestada" {% if request.GET.ordenar_por == '-cantidad_prestada' %}selected{% endif %}>Mayor a menor prestada</option>
+                </select>
+            </div>
+            <div class="col-md-12 text-center mt-3">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Buscar</button>
+                <a href="{% url 'libro-list' %}" class="btn btn-secondary"><i class="fas fa-redo-alt"></i> Reiniciar</a>
+            </div>
+        </div>
+    </form>
+
+    <!-- Tabla de libros -->
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Título</th>
+                <th scope="col">Categoría</th>
+                <th scope="col">Autor</th>
+                <th scope="col">Cantidad Disponible</th>
+                <th scope="col">Cantidad Prestada</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for libro in libros %}
+            <tr>
+                <td>{{ libro.titulo }}</td>
+                <td>{{ libro.get_categoria_display }}</td>
+                <td>{{ libro.autor }}</td>
+                <td>{{ libro.cantidad_disponible }}</td>
+                <td>{{ libro.cantidad_prestada }}</td>
+                <td>
+                    <a href="{% url 'libro-update' libro.id %}" class="btn btn-info btn-sm"><i class="fas fa-edit"></i></a>
+                    <a href="{% url 'libro-delete' libro.id %}" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">No hay libros disponibles.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Paginación (si es necesaria) -->
+    <div class="d-flex justify-content-center">
+        {% if is_paginated %}
+            <nav>
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{% if request.GET.buscar_nombre %}buscar_nombre={{ request.GET.buscar_nombre }}&{% endif %}{% if request.GET.categoria %}categoria={{ request.GET.categoria }}&{% endif %}page={{ page_obj.previous_page_number }}&ordenar_por={{ request.GET.ordenar_por }}">Anterior</a>
+                        </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                            <a class="page-link" href="?{% if request.GET.buscar_nombre %}buscar_nombre={{ request.GET.buscar_nombre }}&{% endif %}{% if request.GET.categoria %}categoria={{ request.GET.categoria }}&{% endif %}page={{ num }}&ordenar_por={{ request.GET.ordenar_por }}">{{ num }}</a>
+                        </li>
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{% if request.GET.buscar_nombre %}buscar_nombre={{ request.GET.buscar_nombre }}&{% endif %}{% if request.GET.categoria %}categoria={{ request.GET.categoria }}&{% endif %}page={{ page_obj.next_page_number }}&ordenar_por={{ request.GET.ordenar_por }}">Siguiente</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

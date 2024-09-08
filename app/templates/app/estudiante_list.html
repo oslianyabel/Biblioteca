@@ -1,0 +1,92 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <!-- Título con animación -->
+    <h2 class="text-center display-4" style="animation: pulse 1.5s 1; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);">
+        Estudiantes
+    </h2>
+
+    <!-- Botón para crear nuevo estudiante -->
+    <div class="text-right mb-3">
+        <a href="{% url 'estudiante-create' %}" class="btn btn-success">
+            <i class="fas fa-plus-circle"></i> Crear Estudiante
+        </a>
+    </div>
+
+    <!-- Formulario de búsqueda y filtrado -->
+    <form method="GET" class="form-inline mb-3">
+        <div class="row">
+            <div class="col-md-4">
+                <input type="text" name="buscar_nombre" class="form-control" placeholder="Nombre" value="{{ request.GET.buscar_nombre }}">
+            </div>
+            <div class="col-md-4">
+                <input type="text" name="buscar_ci" class="form-control" placeholder="CI" value="{{ request.GET.buscar_ci }}">
+            </div>
+            <div class="col-md-4">
+                <select name="ordenar_por" class="form-control">
+                    <option value="">Ordenar por</option>
+                    <option value="anno_academico" {% if request.GET.ordenar_por == 'anno_academico' %}selected{% endif %}>Año Académico Ascendente</option>
+                    <option value="-anno_academico" {% if request.GET.ordenar_por == '-anno_academico' %}selected{% endif %}>Año Académico Descendente</option>
+                </select>
+            </div>
+            <div class="col-md-12 text-center mt-3">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></i> Buscar</button>
+                <a href="{% url 'estudiante-list' %}" class="btn btn-secondary"><i class="fas fa-redo-alt"></i> Reiniciar</a>
+            </div>
+        </div>
+    </form>
+
+    <!-- Tabla de estudiantes -->
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>CI</th>
+                <th>Año Académico</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for estudiante in estudiantes %}
+            <tr>
+                <td>{{ estudiante.nombre }}</td>
+                <td>{{ estudiante.apellidos }}</td>
+                <td>{{ estudiante.CI }}</td>
+                <td>{{ estudiante.anno_academico }}</td>
+                <td>
+                    <a href="{% url 'estudiante-update' estudiante.id %}" class="btn btn-info btn-sm"><i class="fas fa-edit"></i></a>
+                    <a href="{% url 'estudiante-delete' estudiante.id %}" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">No hay estudiantes registrados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Paginación -->
+    <div class="d-flex justify-content-center">
+        {% if is_paginated %}
+            <nav>
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a></li>
+                    {% endif %}
+                    {% for num in page_obj.paginator.page_range %}
+                        <li class="page-item {% if page_obj.number == num %}active{% endif %}"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
