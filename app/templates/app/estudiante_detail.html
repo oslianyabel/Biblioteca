@@ -1,0 +1,60 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center display-4" style="animation: pulse 1.5s 1; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);">
+        Libros Prestados a {{ estudiante.nombre }}
+    </h2>
+
+    <!-- Tabla de libros -->
+    <table class="table table-striped text-center mt-5">
+        <thead class="secondary-color">
+            <tr>
+                <th scope="col">Título</th>
+                <th scope="col">Categoría</th>
+                <th scope="col">Autor</th>
+                <th scope="col">Cantidad Disponible</th>
+                <th scope="col">Cantidad Prestada</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for libro in libros %}
+            <tr>
+                <td>{{ libro.titulo }}</td>
+                <td>{{ libro.get_categoria_display }}</td>
+                <td>{{ libro.autor }}</td>
+                <td>{{ libro.cantidad_disponible }}</td>
+                <td>{{ libro.cantidad_prestada }}</td>
+                <td>
+                    <a href="{% url 'devolver_libro' libro_id=libro.id estudiante_id=estudiante.id %}" class="btn btn-success btn-sm"><i class="fas fa-hand-holding"></i></a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">No hay libros prestados por este estudiante.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Paginación -->
+    <div class="d-flex justify-content-between mt-4">
+        <div>
+            {% if libros.has_previous %}
+                <a href="?page={{ libros.previous_page_number }}" class="btn btn-color">
+                    <i class="fas fa-chevron-left"></i> Anterior
+                </a>
+            {% endif %}
+        </div>
+        <div>
+            {% if libros.has_next %}
+                <a href="?page={{ libros.next_page_number }}" class="btn btn-color">
+                    Siguiente <i class="fas fa-chevron-right"></i>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}

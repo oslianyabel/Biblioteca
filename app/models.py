@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import RegexValidator
+from django.db.models import Q
 
 LIBRO_CATEGORIA = [
     ("programacion", "Programación"),
@@ -26,6 +27,24 @@ class Libro(models.Model):
     
     def __str__(self) -> str:
         return self.titulo
+    
+    def prestar(self):
+        if self.cantidad_disponible > 0:
+            self.cantidad_disponible -= 1
+            self.cantidad_prestada += 1
+            self.save()
+            return True
+        else:
+            return False
+        
+    def devolver(self):
+        if self.cantidad_prestada > 0:
+            self.cantidad_prestada -= 1
+            self.cantidad_disponible += 1
+            self.save()
+            return True
+        else:
+            return False 
 
 
 class Estudiante(models.Model):
@@ -39,8 +58,44 @@ class Estudiante(models.Model):
     def __str__(self) -> str:
         return self.nombre
     
+    @property
+    def cantidad_prestamos(self):
+        return self.prestamo_set.count()
+    
+    @property
+    def cantidad_prestamos_listanegra(self):
+        return self.listanegra_set.count()
+    
+    @classmethod
+    def prestamos(cls):
+        return cls.objects.filter(prestamo__isnull=False).distinct()
+    
+    @classmethod
+    def lista_negra(cls):
+        return cls.objects.filter(listanegra__isnull=False).distinct()
+    
+    @classmethod
+    def promover(cls):
+        cls.objects.update(anno_academico=models.F('anno_academico') + 1)
+        
+    @classmethod
+    def eliminar_graduados(cls):
+        cls.objects.filter(
+            Q(prestamo__isnull=True) &
+            Q(anno_academico__gt=5)
+        ).delete()
+
 
 class Prestamo(models.Model):
+    fecha = models.DateField()
+    estudiante = models.ForeignKey(Estudiante, on_delete=models.CASCADE)
+    libro = models.ForeignKey(Libro, on_delete=models.CASCADE)
+    
+    def __str__(self) -> str:
+        return self.fecha
+
+
+class ListaNegra(models.Model):
     fecha = models.DateField()
     estudiante = models.ForeignKey(Estudiante, on_delete=models.CASCADE)
     libro = models.ForeignKey(Libro, on_delete=models.CASCADE)

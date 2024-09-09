@@ -183,8 +183,15 @@ class PrestamoForm(forms.ModelForm):
     def clean_libro(self):
         libro = self.cleaned_data.get('libro')
         estudiante = self.cleaned_data.get('estudiante')
+        
         if Prestamo.objects.filter(estudiante=estudiante, libro=libro).exists():
             raise ValidationError(f"{estudiante} ya tiene un ejemplar de {libro}")
+        
+        if ListaNegra.objects.filter(estudiante=estudiante).exists():
+            raise ValidationError(f"{estudiante} no puede solicitar préstamos porque está en la lista negra")
+        
+        if libro.cantidad_disponible <= 0:
+            raise ValidationError(f"Se agotaron los ejemplares de {libro}")
         
         return libro
         

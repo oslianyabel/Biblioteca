@@ -1,12 +1,12 @@
 {% extends 'app/base.html' %}
 
 {% block content %}
-<div class="container mt-5">
+
+<div class="container mt-3">
     <h2 class="text-center display-4" style="animation: pulse 1.5s 1; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);">
         Libros
     </h2>
 
-    <!-- Botón para crear nuevo estudiante -->
     <div class="text-right mb-3">
         <a href="{% url 'libro-create' %}" class="btn btn-color">
             <i class="fas fa-plus-circle"></i> Crear Libro
@@ -93,4 +93,5 @@
     </div>
 
 </div>
+
 {% endblock %}

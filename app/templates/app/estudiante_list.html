@@ -2,17 +2,24 @@
 
 {% block content %}
 
-<div class="container mt-5">
+<div class="container mt-3">
     <!-- Título con animación -->
     <h2 class="text-center display-4" style="animation: pulse 1.5s 1; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);">
         Estudiantes
     </h2>
 
-    <!-- Botón para crear nuevo estudiante -->
-    <div class="text-right mb-3">
-        <a href="{% url 'estudiante-create' %}" class="btn btn-color">
-            <i class="fas fa-plus-circle"></i> Crear Estudiante
-        </a>
+    <!-- Contenedor para los botones -->
+    <div class="d-flex justify-content-between mb-3">
+        <div>
+            <a href="{% url 'confirmar_promo' %}" class="btn btn-color">
+                <i class="fas fa-arrow-up"></i> Promover Año
+            </a>
+        </div>
+        <div>
+            <a href="{% url 'estudiante-create' %}" class="btn btn-color">
+                <i class="fas fa-plus-circle"></i> Crear Estudiante
+            </a>
+        </div>
     </div>
 
     <!-- Formulario de búsqueda y filtrado -->
@@ -45,17 +52,21 @@
                 <th class="text-center">Nombre</th>
                 <th class="text-center">Apellidos</th>
                 <th class="text-center">CI</th>
-                <th class="text-center">Año Académico</th>
+                <th class="text-center">Año</th>
+                <th class="text-center">Teléfono</th>
+                <th class="text-center">Préstamos</th>
                 <th class="text-center">Acciones</th>
             </tr>
         </thead>
         <tbody>
             {% for estudiante in estudiantes %}
             <tr>
-                <td class="text-center">{{ estudiante.nombre }}</td>
+                <td class="text-center"><a href="{% url 'estudiante-detail' estudiante.id %}">{{ estudiante.nombre }}</a></td>
                 <td class="text-center">{{ estudiante.apellidos }}</td>
                 <td class="text-center">{{ estudiante.CI }}</td>
                 <td class="text-center">{{ estudiante.anno_academico }}</td>
+                <td class="text-center">{{ estudiante.telefono }}</td>
+                <td class="text-center">{{ estudiante.cantidad_prestamos }}</td>
                 <td class="text-center">
                     <a href="{% url 'estudiante-update' estudiante.id %}" class="btn btn-info btn-sm"><i class="fas fa-edit"></i></a>
                     <a href="{% url 'estudiante-delete' estudiante.id %}" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></a>
@@ -63,7 +74,7 @@
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5" class="text-center">No hay estudiantes registrados.</td>
+                <td colspan="7" class="text-center">No hay estudiantes registrados.</td>
             </tr>
             {% endfor %}
         </tbody>
