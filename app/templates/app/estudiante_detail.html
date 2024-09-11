@@ -1,8 +1,9 @@
 {% extends 'app/base.html' %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="text-center display-4" style="animation: pulse 1.5s 1; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);">
+
+<div class="container mt-3">
+    <h2 class="text-center display-5" style="animation: pulse 1.5s 1; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);">
         Libros Prestados a {{ estudiante.nombre }}
     </h2>
 
@@ -13,21 +14,19 @@
                 <th scope="col">Título</th>
                 <th scope="col">Categoría</th>
                 <th scope="col">Autor</th>
-                <th scope="col">Cantidad Disponible</th>
-                <th scope="col">Cantidad Prestada</th>
+                <th scope="col">Fecha</th>
                 <th scope="col">Acciones</th>
             </tr>
         </thead>
         <tbody>
-            {% for libro in libros %}
+            {% for prestamo in prestamos %}
             <tr>
-                <td>{{ libro.titulo }}</td>
-                <td>{{ libro.get_categoria_display }}</td>
-                <td>{{ libro.autor }}</td>
-                <td>{{ libro.cantidad_disponible }}</td>
-                <td>{{ libro.cantidad_prestada }}</td>
+                <td>{{ prestamo.libro.titulo }}</td>
+                <td>{{ prestamo.libro.get_categoria_display }}</td>
+                <td>{{ prestamo.libro.autor }}</td>
+                <td>{{ prestamo.fecha }}</td>
                 <td>
-                    <a href="{% url 'devolver_libro' libro_id=libro.id estudiante_id=estudiante.id %}" class="btn btn-success btn-sm"><i class="fas fa-hand-holding"></i></a>
+                    <a href="{% url 'devolver_libro' libro_id=prestamo.libro.id estudiante_id=estudiante.id success_url='estudiante-detail' %}" class="btn btn-success btn-sm"><i class="fas fa-hand-holding"></i></a>
                 </td>
             </tr>
             {% empty %}
@@ -41,15 +40,33 @@
     <!-- Paginación -->
     <div class="d-flex justify-content-between mt-4">
         <div>
-            {% if libros.has_previous %}
-                <a href="?page={{ libros.previous_page_number }}" class="btn btn-color">
+            {% if prestamos.has_previous %}
+                <a href="?page={{ prestamos.previous_page_number }}" class="btn btn-color">
                     <i class="fas fa-chevron-left"></i> Anterior
                 </a>
             {% endif %}
         </div>
         <div>
-            {% if libros.has_next %}
-                <a href="?page={{ libros.next_page_number }}" class="btn btn-color">
+            <!-- Números de página -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    {% for num in prestamos.paginator.page_range %}
+                        {% if prestamos.number == num %}
+                            <li class="page-item active">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% elif num > prestamos.number|add:'-5' and num < prestamos.number|add:'5' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </nav>
+        </div>
+        <div>
+            {% if prestamos.has_next %}
+                <a href="?page={{ prestamos.next_page_number }}" class="btn btn-color">
                     Siguiente <i class="fas fa-chevron-right"></i>
                 </a>
             {% endif %}
@@ -57,4 +74,5 @@
     </div>
 
 </div>
+
 {% endblock %}

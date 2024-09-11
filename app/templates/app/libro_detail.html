@@ -1,0 +1,69 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+
+<div class="container mt-3">
+    <h2 class="text-center display-5" style="animation: pulse 1.5s 1; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);">
+        Estudiantes con ejemplares de {{ libro.titulo }}
+    </h2>
+
+    <!-- Formulario de búsqueda y filtrado -->
+    <form method="GET" class="form-inline mb-3">
+        <div class="row">
+            <div class="col-md-4">
+                <input type="text" name="buscar_nombre" class="form-control" placeholder="Nombre" value="{{ request.GET.buscar_nombre }}">
+            </div>
+            <div class="col-md-4">
+                <input type="text" name="buscar_ci" class="form-control" placeholder="CI" value="{{ request.GET.buscar_ci }}">
+            </div>
+            <div class="col-md-4">
+                <select name="ordenar_por" class="form-control">
+                    <option value="">Ordenar por</option>
+                    <option value="anno_academico" {% if request.GET.ordenar_por == 'anno_academico' %}selected{% endif %}>Año Académico Ascendente</option>
+                    <option value="-anno_academico" {% if request.GET.ordenar_por == '-anno_academico' %}selected{% endif %}>Año Académico Descendente</option>
+                </select>
+            </div>
+            <div class="col-md-12 text-center mt-3">
+                <button type="submit" class="btn btn-color"><i class="fas fa-search"></i> Buscar</button>
+                <a href="{% url 'estudiante-list' %}" class="btn btn-color"><i class="fas fa-redo-alt"></i> Reiniciar</a>
+            </div>
+        </div>
+    </form>
+
+    <!-- Tabla de estudiantes -->
+    <table class="table table-striped text-center">
+        <thead class="secondary-color">
+            <tr>
+                <th>Nombre</th>
+                <th>Apellidos</th>
+                <th>CI</th>
+                <th>Año</th>
+                <th>Teléfono</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for prestamo in prestamos %}
+            <tr>
+                <td><a href="{% url 'estudiante-detail' prestamo.estudiante.id %}">{{ prestamo.estudiante.nombre }}</a></td>
+                <td>{{ prestamo.estudiante.apellidos }}</td>
+                <td>{{ prestamo.estudiante.CI }}</td>
+                <td>{{ prestamo.estudiante.anno_academico }}</td>
+                <td>{{ prestamo.estudiante.telefono }}</td>
+                <td>{{ prestamo.fecha }}</td>
+                <td>
+                    <a href="{% url 'devolver_libro' libro_id=libro.id estudiante_id=prestamo.estudiante.id success_url='libro-detail' %}" class="btn btn-success btn-sm"><i class="fas fa-hand-holding"></i></a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">No hay estudiantes registrados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

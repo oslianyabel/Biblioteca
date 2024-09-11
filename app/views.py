@@ -1,6 +1,6 @@
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import login
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.paginator import Paginator
@@ -30,9 +30,26 @@ class EstudianteListView(ListView):
     template_name = 'estudiante_list.html'
     context_object_name = 'estudiantes'
     
+    def get_queryset(self):
+        queryset = Estudiante.objects.all()
+        
+        nombre = self.request.GET.get('buscar_nombre', '')
+        if nombre:
+            queryset = queryset.filter(nombre__icontains=nombre)
+
+        ci = self.request.GET.get('buscar_ci', '')
+        if ci:
+            queryset = queryset.filter(CI=ci)
+        
+        orden = self.request.GET.get("ordenar_por", "")
+        if orden:
+            queryset = queryset.order_by(orden)
+
+        return queryset
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        estudiantes = Estudiante.objects.all()
+        estudiantes = self.get_queryset()
         paginator = Paginator(estudiantes, 10)
         page = self.request.GET.get("page")
         estudiantes = paginator.get_page(page)
@@ -48,8 +65,12 @@ class EstudianteDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         estudiante = self.get_object()
-        libros_prestados = Libro.objects.filter(prestamo__estudiante=estudiante)
-        context['libros'] = libros_prestados
+        prestamos = Prestamo.objects.filter(estudiante = estudiante)
+        
+        if not prestamos:
+            prestamos = ListaNegra.objects.filter(estudiante = estudiante)
+            
+        context['prestamos'] = prestamos
         
         return context
 
@@ -84,20 +105,53 @@ class LibroListView(ListView):
     template_name = 'libro_list.html'
     context_object_name = 'libros'
     
+    def get_queryset(self):
+        queryset = Libro.objects.all()
+        
+        titulo = self.request.GET.get('buscar_titulo', '')
+        if titulo:
+            queryset = queryset.filter(titulo__icontains=titulo)
+
+        categoria = self.request.GET.get('categoria', '')
+        if categoria:
+            queryset = queryset.filter(categoria=categoria)
+
+        autor = self.request.GET.get('buscar_autor', '')
+        if autor:
+            queryset = queryset.filter(autor__icontains=autor)
+        
+        orden = self.request.GET.get("ordenar_por", "")
+        if orden:
+            queryset = queryset.order_by(orden)
+
+        return queryset
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        libros = Libro.objects.all()
+        libros = self.get_queryset()
+        
         paginator = Paginator(libros, 10)
         page = self.request.GET.get("page")
         libros = paginator.get_page(page)
+        
         context["libros"] = libros
-            
+        context["LIBRO_CATEGORIA"] = LIBRO_CATEGORIA
         return context
 
 # Detalles de un libro
 class LibroDetailView(DetailView):
     model = Libro
-    template_name = 'libro_detail.html'
+    template_name = 'app/libro_detail.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        libro = self.get_object()
+        
+        prestamos = Prestamo.objects.filter(libro = libro)
+        prestamos2 = ListaNegra.objects.filter(libro = libro)
+        
+        context["prestamos"] = prestamos.union(prestamos2)
+        return context
 
 # Crear un nuevo libro
 @method_decorator(group_required('bibliotecario'), name='dispatch')
@@ -130,20 +184,32 @@ class PrestamoListView(ListView):
     template_name = 'prestamo_list.html'
     context_object_name = 'prestamos'
     
+    def get_queryset(self):
+        queryset = Prestamo.objects.all()
+        
+        estudiante = self.request.GET.get('buscar_estudiante', '')
+        if estudiante:
+            queryset = queryset.filter(estudiante__nombre__icontains=estudiante)
+
+        libro = self.request.GET.get('buscar_libro', '')
+        if libro:
+            queryset = queryset.filter(libro__titulo__icontains=libro)
+        
+        orden = self.request.GET.get("ordenar_por", "")
+        if orden:
+            queryset = queryset.order_by(orden)
+
+        return queryset
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        prestamos = Prestamo.objects.all()
+        prestamos = self.get_queryset()
         paginator = Paginator(prestamos, 10)
         page = self.request.GET.get("page")
         prestamos = paginator.get_page(page)
         context["prestamos"] = prestamos
             
         return context
-
-# Detalles de un préstamo
-class PrestamoDetailView(DetailView):
-    model = Prestamo
-    template_name = 'prestamo_detail.html'
 
 # Crear un nuevo préstamo
 @method_decorator(group_required('bibliotecario'), name='dispatch')
@@ -156,7 +222,6 @@ class PrestamoCreateView(CreateView):
     def form_valid(self, form):
         prestamo = form.save()
         prestamo.libro.prestar()
-
         return super().form_valid(form)
 
 # Actualizar un préstamo
@@ -174,12 +239,11 @@ class PrestamoDeleteView(DeleteView):
     template_name = 'app/prestamo_confirm_delete.html'
     success_url = reverse_lazy('prestamo-list')
     
-    def delete(self, request, *args, **kwargs):
+    def form_valid(self, form):
         prestamo = self.get_object()
         prestamo.libro.devolver()
-        
-        return super().delete(request, *args, **kwargs)
-
+        return super().form_valid(form)
+    
 
 #=====================================================LISTA NEGRA===============================================
 # Listar estudiantes en lista negra
@@ -199,7 +263,8 @@ class ListaNegraListView(ListView):
         
         return context
 
-# Eliminar un estudiante de la lista negra con todas las devoluciones realizadas
+
+# Sacar un estudiante de la lista negra con todas las devoluciones realizadas
 @group_required('directivo')
 def sacar_estudiante(request, pk):
     if request.method == "GET":
@@ -254,13 +319,19 @@ def confirmar_promo(request):
     return render(request, 'app/confirmar_promo.html')
 
 
-def devolver_libro(request, libro_id, estudiante_id):
+def devolver_libro(request, libro_id, estudiante_id, success_url):
     libro = Libro.objects.get(id = libro_id)
     estudiante = Estudiante.objects.get(id = estudiante_id)
     prestamos = Prestamo.objects.all()
+    lista_negra = ListaNegra.objects.all()
     
     libro.devolver()
     prestamos.filter(estudiante=estudiante, libro=libro).delete()
+    lista_negra.filter(estudiante=estudiante, libro=libro).delete()
     
-    return redirect(reverse("estudiante-detail", kwargs={"pk":estudiante_id}))
+    if success_url == "estudiante-detail":
+        pk = estudiante_id
+    if success_url == "libro-detail":
+        pk = libro_id
     
+    return redirect(reverse(success_url, kwargs={"pk":pk}))

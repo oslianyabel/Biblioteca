@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="container mt-3">
-    <h2 class="text-center display-4" style="animation: pulse 1.5s 1; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);">
+    <h2 class="text-center display-5" style="animation: pulse 1.5s 1; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);">
         Préstamos
     </h2>
 
@@ -25,8 +25,8 @@
             <div class="col-md-4">
                 <select name="ordenar_por" class="form-control">
                     <option value="">Ordenar por</option>
-                    <option value="fecha" {% if request.GET.ordenar_por == 'fecha' %}selected{% endif %}>Fecha Ascendente</option>
-                    <option value="-fecha" {% if request.GET.ordenar_por == '-fecha' %}selected{% endif %}>Fecha Descendente</option>
+                    <option value="fecha" {% if request.GET.ordenar_por == 'fecha' %}selected{% endif %}>Antiguos</option>
+                    <option value="-fecha" {% if request.GET.ordenar_por == '-fecha' %}selected{% endif %}>Recientes</option>
                 </select>
             </div>
             <div class="col-md-12 text-center mt-3">
@@ -49,8 +49,8 @@
         <tbody>
             {% for prestamo in prestamos %}
             <tr>
-                <td>{{ prestamo.estudiante.nombre }} {{ prestamo.estudiante.apellido }}</td>
-                <td>{{ prestamo.libro.titulo }}</td>
+                <td><a href="{% url 'estudiante-detail' prestamo.estudiante.id %}">{{ prestamo.estudiante.nombre }} {{ prestamo.estudiante.apellidos }}</a></td>
+                <td><a href="{% url 'libro-detail' prestamo.libro.id %}">{{ prestamo.libro.titulo }}</a></td>
                 <td>{{ prestamo.fecha }}</td>
                 <td>
                     <a href="{% url 'prestamo-update' prestamo.id %}" class="btn btn-info btn-sm"><i class="fas fa-edit"></i></a>
@@ -73,6 +73,24 @@
                     <i class="fas fa-chevron-left"></i> Anterior
                 </a>
             {% endif %}
+        </div>
+        <div>
+            <!-- Números de página -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    {% for num in prestamos.paginator.page_range %}
+                        {% if prestamos.number == num %}
+                            <li class="page-item active">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% elif num > prestamos.number|add:'-5' and num < prestamos.number|add:'5' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </nav>
         </div>
         <div>
             {% if prestamos.has_next %}

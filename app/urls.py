@@ -23,7 +23,6 @@ urlpatterns = [
 
     # URLs para Prestamo
     path('prestamos/', PrestamoListView.as_view(), name='prestamo-list'),
-    path('prestamos/<int:pk>/', PrestamoDetailView.as_view(), name='prestamo-detail'),
     path('prestamos/nuevo/', PrestamoCreateView.as_view(), name='prestamo-create'),
     path('prestamos/<int:pk>/editar/', PrestamoUpdateView.as_view(), name='prestamo-update'),
     path('prestamos/<int:pk>/eliminar/', PrestamoDeleteView.as_view(), name='prestamo-delete'),
@@ -33,5 +32,5 @@ urlpatterns = [
     path('accounts/login/', user_login, name='login'),
     path('logout/', LogoutView.as_view(next_page="/login"), name='logout'),
     path('confirmar_promo/', confirmar_promo, name='confirmar_promo'),
-    path('devolver_libro/<int:libro_id>/<int:estudiante_id>', devolver_libro, name='devolver_libro'),
+    path('devolver_libro/<int:libro_id>/<int:estudiante_id>/<str:success_url>', devolver_libro, name='devolver_libro'),
 ]

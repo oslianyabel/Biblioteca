@@ -14,6 +14,12 @@ LIBRO_CATEGORIAS = [
     "inteligencia artificial", "bases de datos"
 ]
 
+# Borrar todas las instancias
+Estudiante.objects.all().delete()
+Libro.objects.all().delete()
+Prestamo.objects.all().delete()
+ListaNegra.objects.all().delete()
+
 # Crear libros de prueba
 for _ in range(100):
     libro = Libro(
@@ -29,7 +35,7 @@ for _ in range(100):
     print(f"Libro '{libro.titulo}' creado")
 
 # Crear estudiantes de prueba
-for _ in range(500):
+for _ in range(30):
     estudiante = Estudiante(
         nombre=faker.first_name(),
         apellidos=faker.last_name(),
@@ -42,7 +48,7 @@ for _ in range(500):
     print(f"Estudiante '{estudiante.nombre} {estudiante.apellidos}' creado")
 
 # Crear préstamos de prueba
-for _ in range(600):
+for _ in range(50):
     libro = choice(Libro.objects.filter(cantidad_disponible__gt=0))
     estudiante = choice(Estudiante.objects.all())
     prestamo = Prestamo(
@@ -51,17 +57,5 @@ for _ in range(600):
         libro=libro
     )
     prestamo.save()
-    libro.prestar_libro()  # Prestar el libro
+    libro.prestar()  # Prestar el libro
     print(f"Préstamo creado: Libro '{libro.titulo}' prestado a {estudiante.nombre}")
-
-# Crear estudiantes en la lista negra
-for _ in range(10):
-    libro = choice(Libro.objects.filter(cantidad_prestada__gt=0))
-    estudiante = choice(Estudiante.objects.all())
-    lista_negra = ListaNegra(
-        fecha=faker.date_between(start_date="-60d", end_date="-30d"),
-        estudiante=estudiante,
-        libro=libro
-    )
-    lista_negra.save()
-    print(f"Estudiante '{estudiante.nombre}' añadido a la lista negra para el libro '{libro.titulo}'")

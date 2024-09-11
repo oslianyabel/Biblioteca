@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="container mt-3">
-    <h2 class="text-center display-4" style="animation: pulse 1.5s 1; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);">
+    <h2 class="text-center display-5" style="animation: pulse 1.5s 1; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);">
         Libros
     </h2>
 
@@ -12,14 +12,17 @@
             <i class="fas fa-plus-circle"></i> Crear Libro
         </a>
     </div>
-    
-    <!-- Formulario de búsqueda y filtrado -->
+
+    <!-- Filtros -->
     <form method="GET" class="form-inline mb-3">
         <div class="row">
-            <div class="col-md-4">
-                <input type="text" name="buscar_nombre" class="form-control" placeholder="Nombre" value="{{ request.GET.buscar_nombre }}">
+            <!-- Filtrado por título -->
+            <div class="col-md-3">
+                <input type="text" name="buscar_titulo" class="form-control" placeholder="Título" value="{{ request.GET.buscar_titulo }}">
             </div>
-            <div class="col-md-4">
+    
+            <!-- Filtrado por categoría -->
+            <div class="col-md-3">
                 <select name="categoria" class="form-control">
                     <option value="">Todas las categorías</option>
                     {% for key, value in LIBRO_CATEGORIA %}
@@ -27,17 +30,33 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-md-4">
+    
+            <!-- Filtrado por autor -->
+            <div class="col-md-3">
+                <input type="text" name="buscar_autor" class="form-control" placeholder="Autor" value="{{ request.GET.buscar_autor }}">
+            </div>
+
+            <!-- Ordenamiento -->
+            <div class="col-md-3">
                 <select name="ordenar_por" class="form-control">
                     <option value="">Ordenar por</option>
-                    <option value="cantidad_prestada" {% if request.GET.ordenar_por == 'cantidad_prestada' %}selected{% endif %}>Cantidad prestada</option>
-                    <option value="-cantidad_prestada" {% if request.GET.ordenar_por == '-cantidad_prestada' %}selected{% endif %}>Mayor a menor prestada</option>
+                    <option value="cantidad_disponible" {% if request.GET.ordenar_por == 'cantidad_disponible' %}selected{% endif %}>Menos Disponibles</option>
+                    <option value="-cantidad_disponible" {% if request.GET.ordenar_por == '-cantidad_disponible' %}selected{% endif %}>Más Disponibles</option>
+                    <option value="cantidad_prestada" {% if request.GET.ordenar_por == 'cantidad_prestada' %}selected{% endif %}>Menos Prestados</option>
+                    <option value="-cantidad_prestada" {% if request.GET.ordenar_por == '-cantidad_prestada' %}selected{% endif %}>Más Prestados</option>
                 </select>
             </div>
+            
+            <!-- Botones -->
             <div class="col-md-12 text-center mt-3">
-                <button type="submit" class="btn btn-color"><i class="fas fa-search"></i> Buscar</button>
-                <a href="{% url 'libro-list' %}" class="btn btn-color"><i class="fas fa-redo-alt"></i> Reiniciar</a>
+                <button type="submit" class="btn btn-color">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+                <a href="{% url 'libro-list' %}" class="btn btn-color">
+                    <i class="fas fa-redo-alt"></i> Reiniciar
+                </a>
             </div>
+
         </div>
     </form>
 
@@ -48,15 +67,15 @@
                 <th scope="col">Título</th>
                 <th scope="col">Categoría</th>
                 <th scope="col">Autor</th>
-                <th scope="col">Cantidad Disponible</th>
-                <th scope="col">Cantidad Prestada</th>
+                <th scope="col">Disponibles</th>
+                <th scope="col">Prestados</th>
                 <th scope="col">Acciones</th>
             </tr>
         </thead>
         <tbody>
             {% for libro in libros %}
             <tr>
-                <td>{{ libro.titulo }}</td>
+                <td><a href="{% url 'libro-detail' libro.id %}">{{ libro.titulo }}</a></td>
                 <td>{{ libro.get_categoria_display }}</td>
                 <td>{{ libro.autor }}</td>
                 <td>{{ libro.cantidad_disponible }}</td>
@@ -82,6 +101,24 @@
                     <i class="fas fa-chevron-left"></i> Anterior
                 </a>
             {% endif %}
+        </div>
+        <div>
+            <!-- Números de página -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    {% for num in libros.paginator.page_range %}
+                        {% if libros.number == num %}
+                            <li class="page-item active">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% elif num > libros.number|add:'-5' and num < libros.number|add:'5' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </nav>
         </div>
         <div>
             {% if libros.has_next %}

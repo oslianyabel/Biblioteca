@@ -30,8 +30,8 @@ class Libro(models.Model):
     
     def prestar(self):
         if self.cantidad_disponible > 0:
-            self.cantidad_disponible -= 1
             self.cantidad_prestada += 1
+            self.cantidad_disponible -= 1
             self.save()
             return True
         else:
@@ -60,11 +60,7 @@ class Estudiante(models.Model):
     
     @property
     def cantidad_prestamos(self):
-        return self.prestamo_set.count()
-    
-    @property
-    def cantidad_prestamos_listanegra(self):
-        return self.listanegra_set.count()
+        return self.prestamo_set.count() + self.listanegra_set.count()
     
     @classmethod
     def prestamos(cls):
