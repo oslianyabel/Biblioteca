@@ -29,13 +29,13 @@
             <div class="col-md-4">
                 <select name="ordenar_por" class="form-control">
                     <option value="">Ordenar por</option>
-                    <option value="anno_academico" {% if request.GET.ordenar_por == 'anno_academico' %}selected{% endif %}>Año Académico Ascendente</option>
-                    <option value="-anno_academico" {% if request.GET.ordenar_por == '-anno_academico' %}selected{% endif %}>Año Académico Descendente</option>
+                    <option value="anno_academico" {% if request.GET.ordenar_por == 'anno_academico' %}selected{% endif %}>Menores</option>
+                    <option value="-anno_academico" {% if request.GET.ordenar_por == '-anno_academico' %}selected{% endif %}>Mayores</option>
                 </select>
             </div>
             <div class="col-md-12 text-center mt-3">
                 <button type="submit" class="btn btn-color"><i class="fas fa-search"></i> Buscar</button>
-                <a href="{% url 'estudiante-list' %}" class="btn btn-color"><i class="fas fa-redo-alt"></i> Reiniciar</a>
+                <a href="{% url 'lista_negra-list' %}" class="btn btn-color"><i class="fas fa-redo-alt"></i> Reiniciar</a>
             </div>
         </div>
     </form>
@@ -59,7 +59,7 @@
                 <td><a href="{% url 'estudiante-detail' estudiante.id %}">{{ estudiante.nombre }}</a></td>
                 <td>{{ estudiante.apellidos }}</td>
                 <td>{{ estudiante.CI }}</td>
-                <td>{{ estudiante.anno_academico }}</td>
+                <td {% if estudiante.anno_academico > 3 %} class="black-list" {% endif %}>{{ estudiante.anno_academico }}</td>
                 <td>{{ estudiante.telefono }}</td>
                 <td>{{ estudiante.cantidad_prestamos }}</td>
                 <td>

@@ -73,13 +73,6 @@ class Estudiante(models.Model):
     @classmethod
     def promover(cls):
         cls.objects.update(anno_academico=models.F('anno_academico') + 1)
-        
-    @classmethod
-    def eliminar_graduados(cls):
-        cls.objects.filter(
-            Q(prestamo__isnull=True) &
-            Q(anno_academico__gt=5)
-        ).delete()
 
 
 class Prestamo(models.Model):

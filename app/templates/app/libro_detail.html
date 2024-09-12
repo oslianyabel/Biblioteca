@@ -19,13 +19,13 @@
             <div class="col-md-4">
                 <select name="ordenar_por" class="form-control">
                     <option value="">Ordenar por</option>
-                    <option value="anno_academico" {% if request.GET.ordenar_por == 'anno_academico' %}selected{% endif %}>Año Académico Ascendente</option>
-                    <option value="-anno_academico" {% if request.GET.ordenar_por == '-anno_academico' %}selected{% endif %}>Año Académico Descendente</option>
+                    <option value="fecha" {% if request.GET.ordenar_por == 'fecha' %}selected{% endif %}>Antiguos</option>
+                    <option value="-fecha" {% if request.GET.ordenar_por == '-fecha' %}selected{% endif %}>Recientes</option>
                 </select>
             </div>
             <div class="col-md-12 text-center mt-3">
                 <button type="submit" class="btn btn-color"><i class="fas fa-search"></i> Buscar</button>
-                <a href="{% url 'estudiante-list' %}" class="btn btn-color"><i class="fas fa-redo-alt"></i> Reiniciar</a>
+                <a href="{% url 'libro-detail' libro.id %}" class="btn btn-color"><i class="fas fa-redo-alt"></i> Reiniciar</a>
             </div>
         </div>
     </form>
@@ -56,11 +56,25 @@
                     <a href="{% url 'devolver_libro' libro_id=libro.id estudiante_id=prestamo.estudiante.id success_url='libro-detail' %}" class="btn btn-success btn-sm"><i class="fas fa-hand-holding"></i></a>
                 </td>
             </tr>
-            {% empty %}
+            {% endfor %}
+            {% for prestamo in prestamos2 %}
             <tr>
-                <td colspan="7" class="text-center">No hay estudiantes registrados.</td>
+                <td><a href="{% url 'estudiante-detail' prestamo.estudiante.id %}">{{ prestamo.estudiante.nombre }}</a></td>
+                <td>{{ prestamo.estudiante.apellidos }}</td>
+                <td>{{ prestamo.estudiante.CI }}</td>
+                <td>{{ prestamo.estudiante.anno_academico }}</td>
+                <td>{{ prestamo.estudiante.telefono }}</td>
+                <td class="black-list">{{ prestamo.fecha }}</td>
+                <td>
+                    <a href="{% url 'devolver_libro' libro_id=libro.id estudiante_id=prestamo.estudiante.id success_url='libro-detail' %}" class="btn btn-success btn-sm"><i class="fas fa-hand-holding"></i></a>
+                </td>
             </tr>
             {% endfor %}
+            {% if not prestamos and not prestamos2 %}
+                <tr>
+                    <td colspan="7" class="text-center">No hay estudiantes registrados.</td>
+                </tr>
+            {% endif %}
         </tbody>
     </table>
 

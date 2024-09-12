@@ -152,7 +152,23 @@ class LibroDetailView(DetailView):
         prestamos = Prestamo.objects.filter(libro = libro)
         prestamos2 = ListaNegra.objects.filter(libro = libro)
         
-        context["prestamos"] = prestamos.union(prestamos2)
+        nombre = self.request.GET.get('buscar_nombre', '')
+        if nombre:
+            prestamos = prestamos.filter(estudiante__nombre__icontains=nombre)
+            prestamos2 = prestamos2.filter(estudiante__nombre__icontains=nombre)
+
+        ci = self.request.GET.get('buscar_ci', '')
+        if ci:
+            prestamos = prestamos.filter(estudiante__CI=ci)
+            prestamos2 = prestamos2.filter(estudiante__CI=ci)
+            
+        orden = self.request.GET.get("ordenar_por", "")
+        if orden:
+            prestamos = prestamos.order_by(orden)
+            prestamos2 = prestamos2.order_by(orden)
+
+        context["prestamos"] = prestamos
+        context["prestamos2"] = prestamos2
         return context
 
 # Crear un nuevo libro
@@ -257,9 +273,26 @@ class ListaNegraListView(ListView):
     template_name = 'app/lista_negra.html'
     context_object_name = 'estudiantes'
     
+    def get_queryset(self):
+        queryset = Estudiante.lista_negra()
+        
+        estudiante = self.request.GET.get('buscar_nombre', '')
+        if estudiante:
+            queryset = queryset.filter(nombre__icontains=estudiante)
+
+        ci = self.request.GET.get('buscar_ci', '')
+        if ci:
+            queryset = queryset.filter(CI=ci)
+        
+        orden = self.request.GET.get("ordenar_por", "")
+        if orden:
+            queryset = queryset.order_by(orden)
+
+        return queryset
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        estudiantes = Estudiante.lista_negra()
+        estudiantes = self.get_queryset()
         context["cantidad"] = len(estudiantes)
         
         paginator = Paginator(estudiantes, 10)
@@ -309,7 +342,13 @@ def promover_anno():
     
     prestamos.delete()
     Estudiante.promover()
-    Estudiante.eliminar_graduados()
+    
+    estudiantes_5to = Estudiante.objects.filter(anno_academico__gt=5)
+    estudiantes_con_prestamos = Estudiante.prestamos()
+    
+    for e in estudiantes_5to:
+        if e not in estudiantes_con_prestamos:
+            e.delete()
     
     return True
 

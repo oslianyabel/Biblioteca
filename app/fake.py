@@ -48,7 +48,7 @@ for _ in range(30):
     print(f"Estudiante '{estudiante.nombre} {estudiante.apellidos}' creado")
 
 # Crear préstamos de prueba
-for _ in range(100):
+for _ in range(200):
     libro = choice(Libro.objects.filter(cantidad_disponible__gt=0))
     estudiante = choice(Estudiante.objects.all())
     prestamo = Prestamo(
