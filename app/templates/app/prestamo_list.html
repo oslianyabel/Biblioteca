@@ -4,7 +4,7 @@
 
 <div class="container mt-3">
     <h2 class="text-center display-5" style="animation: pulse 1.5s 1; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);">
-        Préstamos
+        Préstamos ({{ cantidad }})
     </h2>
 
     <div class="text-right mb-3">
@@ -69,7 +69,7 @@
     <div class="d-flex justify-content-between mt-4">
         <div>
             {% if prestamos.has_previous %}
-                <a href="?page={{ prestamos.previous_page_number }}" class="btn btn-color">
+                <a href="?page={{ prestamos.previous_page_number }}&buscar_nombre={{ request.GET.buscar_nombre }}&buscar_ci={{ request.GET.buscar_ci }}&ordenar_por={{ request.GET.ordenar_por }}" class="btn btn-color">
                     <i class="fas fa-chevron-left"></i> Anterior
                 </a>
             {% endif %}
@@ -81,11 +81,11 @@
                     {% for num in prestamos.paginator.page_range %}
                         {% if prestamos.number == num %}
                             <li class="page-item active">
-                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                <a class="page-link" href="?page={{ num }}&buscar_nombre={{ request.GET.buscar_nombre }}&buscar_ci={{ request.GET.buscar_ci }}&ordenar_por={{ request.GET.ordenar_por }}">{{ num }}</a>
                             </li>
                         {% elif num > prestamos.number|add:'-5' and num < prestamos.number|add:'5' %}
                             <li class="page-item">
-                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                <a class="page-link" href="?page={{ num }}&buscar_nombre={{ request.GET.buscar_nombre }}&buscar_ci={{ request.GET.buscar_ci }}&ordenar_por={{ request.GET.ordenar_por }}">{{ num }}</a>
                             </li>
                         {% endif %}
                     {% endfor %}
@@ -94,7 +94,7 @@
         </div>
         <div>
             {% if prestamos.has_next %}
-                <a href="?page={{ prestamos.next_page_number }}" class="btn btn-color">
+                <a href="?page={{ prestamos.next_page_number }}&buscar_nombre={{ request.GET.buscar_nombre }}&buscar_ci={{ request.GET.buscar_ci }}&ordenar_por={{ request.GET.ordenar_por }}" class="btn btn-color">
                     Siguiente <i class="fas fa-chevron-right"></i>
                 </a>
             {% endif %}

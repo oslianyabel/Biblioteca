@@ -97,7 +97,7 @@
     <div class="d-flex justify-content-between mt-4">
         <div>
             {% if libros.has_previous %}
-                <a href="?page={{ libros.previous_page_number }}&buscar_nombre={{ request.GET.buscar_nombre }}&buscar_ci={{ request.GET.buscar_ci }}&ordenar_por={{ request.GET.ordenar_por }}" class="btn btn-color">
+                <a href="?page={{ libros.previous_page_number }}" class="btn btn-color">
                     <i class="fas fa-chevron-left"></i> Anterior
                 </a>
             {% endif %}
@@ -109,11 +109,11 @@
                     {% for num in libros.paginator.page_range %}
                         {% if libros.number == num %}
                             <li class="page-item active">
-                                <a class="page-link" href="?page={{ num }}&buscar_nombre={{ request.GET.buscar_nombre }}&buscar_ci={{ request.GET.buscar_ci }}&ordenar_por={{ request.GET.ordenar_por }}">{{ num }}</a>
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
                             </li>
                         {% elif num > libros.number|add:'-5' and num < libros.number|add:'5' %}
                             <li class="page-item">
-                                <a class="page-link" href="?page={{ num }}&buscar_nombre={{ request.GET.buscar_nombre }}&buscar_ci={{ request.GET.buscar_ci }}&ordenar_por={{ request.GET.ordenar_por }}">{{ num }}</a>
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
                             </li>
                         {% endif %}
                     {% endfor %}
@@ -122,7 +122,7 @@
         </div>
         <div>
             {% if libros.has_next %}
-                <a href="?page={{ libros.next_page_number }}&buscar_nombre={{ request.GET.buscar_nombre }}&buscar_ci={{ request.GET.buscar_ci }}&ordenar_por={{ request.GET.ordenar_por }}" class="btn btn-color">
+                <a href="?page={{ libros.next_page_number }}" class="btn btn-color">
                     Siguiente <i class="fas fa-chevron-right"></i>
                 </a>
             {% endif %}

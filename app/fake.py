@@ -21,7 +21,7 @@ Prestamo.objects.all().delete()
 ListaNegra.objects.all().delete()
 
 # Crear libros de prueba
-for _ in range(100):
+for _ in range(50):
     libro = Libro(
         titulo=faker.sentence(nb_words=3),
         categoria=choice(LIBRO_CATEGORIAS),
@@ -48,7 +48,7 @@ for _ in range(30):
     print(f"Estudiante '{estudiante.nombre} {estudiante.apellidos}' creado")
 
 # Crear préstamos de prueba
-for _ in range(50):
+for _ in range(100):
     libro = choice(Libro.objects.filter(cantidad_disponible__gt=0))
     estudiante = choice(Estudiante.objects.all())
     prestamo = Prestamo(

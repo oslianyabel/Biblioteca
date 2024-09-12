@@ -5,7 +5,7 @@
 <div class="container mt-3">
     <!-- Título con animación -->
     <h2 class="text-center display-5" style="animation: pulse 1.5s 1; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);">
-        Estudiantes ({{ cantidad }})
+        Estudiantes
     </h2>
 
     <!-- Contenedor para los botones -->
@@ -80,41 +80,7 @@
         </tbody>
     </table>
 
-    <!-- Paginación -->
-    <div class="d-flex justify-content-between mt-4">
-        <div>
-            {% if estudiantes.has_previous %}
-                <a href="?page={{ estudiantes.previous_page_number }}&buscar_nombre={{ request.GET.buscar_nombre }}&buscar_ci={{ request.GET.buscar_ci }}&ordenar_por={{ request.GET.ordenar_por }}" class="btn btn-color">
-                    <i class="fas fa-chevron-left"></i> Anterior
-                </a>
-            {% endif %}
-        </div>
-        <div>
-            <!-- Números de página -->
-            <nav aria-label="Page navigation">
-                <ul class="pagination">
-                    {% for num in estudiantes.paginator.page_range %}
-                        {% if estudiantes.number == num %}
-                            <li class="page-item active">
-                                <a class="page-link" href="?page={{ num }}&buscar_nombre={{ request.GET.buscar_nombre }}&buscar_ci={{ request.GET.buscar_ci }}&ordenar_por={{ request.GET.ordenar_por }}">{{ num }}</a>
-                            </li>
-                        {% elif num > estudiantes.number|add:'-5' and num < estudiantes.number|add:'5' %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ num }}&buscar_nombre={{ request.GET.buscar_nombre }}&buscar_ci={{ request.GET.buscar_ci }}&ordenar_por={{ request.GET.ordenar_por }}">{{ num }}</a>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-            </nav>
-        </div>
-        <div>
-            {% if estudiantes.has_next %}
-                <a href="?page={{ estudiantes.next_page_number }}&buscar_nombre={{ request.GET.buscar_nombre }}&buscar_ci={{ request.GET.buscar_ci }}&ordenar_por={{ request.GET.ordenar_por }}" class="btn btn-color">
-                    Siguiente <i class="fas fa-chevron-right"></i>
-                </a>
-            {% endif %}
-        </div>
-    </div>
+    
 
 </div>
 

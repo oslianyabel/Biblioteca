@@ -50,6 +50,7 @@ class EstudianteListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         estudiantes = self.get_queryset()
+        context["cantidad"] = len(estudiantes)
         paginator = Paginator(estudiantes, 10)
         page = self.request.GET.get("page")
         estudiantes = paginator.get_page(page)
@@ -129,6 +130,7 @@ class LibroListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         libros = self.get_queryset()
+        context["cantidad"] = len(libros)
         
         paginator = Paginator(libros, 10)
         page = self.request.GET.get("page")
@@ -204,6 +206,8 @@ class PrestamoListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         prestamos = self.get_queryset()
+        context["cantidad"] = len(prestamos)
+        
         paginator = Paginator(prestamos, 10)
         page = self.request.GET.get("page")
         prestamos = paginator.get_page(page)
@@ -256,6 +260,8 @@ class ListaNegraListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         estudiantes = Estudiante.lista_negra()
+        context["cantidad"] = len(estudiantes)
+        
         paginator = Paginator(estudiantes, 10)
         page = self.request.GET.get("page")
         estudiantes = paginator.get_page(page)
