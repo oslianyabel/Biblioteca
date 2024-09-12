@@ -283,9 +283,8 @@ def sacar_estudiante(request, pk):
         
         prestamos_estudiante.delete()
         return redirect("lista_negra-list")
-    
-    
 
+ 
 #=====================================================EXTRA=====================================================
 def user_login(request):
     if request.method == 'POST':
@@ -297,7 +296,6 @@ def user_login(request):
     else:
         form = AuthenticationForm()
     return render(request, 'accounts/login.html', {'form': form})
-
 
 def promover_anno():
     prestamos = Prestamo.objects.all()
@@ -315,7 +313,6 @@ def promover_anno():
     
     return True
 
-
 def confirmar_promo(request):
     if request.method == 'POST':
         # Confirmación del usuario
@@ -324,7 +321,7 @@ def confirmar_promo(request):
     
     return render(request, 'app/confirmar_promo.html')
 
-
+@group_required('bibliotecario')
 def devolver_libro(request, libro_id, estudiante_id, success_url):
     libro = Libro.objects.get(id = libro_id)
     estudiante = Estudiante.objects.get(id = estudiante_id)

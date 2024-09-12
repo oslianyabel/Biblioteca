@@ -1,134 +1,57 @@
-{% extends 'app/base.html' %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página no encontrada</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        :root {
+            --color-primario: #161a17;
+            --color-secundario: #324440;
+            --color-terciario: #dbe4e2;
+            --color-cuarto: #cb9e9d;
+        }
 
-{% block content %}
+        body {
+            background-color: var(--color-terciario);
+            font-family: 'Ubuntu', sans-serif;
+        }
 
-<div class="container mt-3">
-    <h2 class="text-center display-5" style="animation: pulse 1.5s 1; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);">
-        Libros ({{ cantidad }})
-    </h2>
+        .container {
+            margin-top: 5%;
+        }
 
-    <div class="text-right mb-3">
-        <a href="{% url 'libro-create' %}" class="btn btn-color">
-            <i class="fas fa-plus-circle"></i> Crear Libro
-        </a>
+        .error-title {
+            color: var(--color-primario);
+            font-size: 100px;
+            font-weight: bold;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .error-message {
+            font-size: 24px;
+            color: var(--color-secundario);
+        }
+
+        .btn-home {
+            background-color: var(--color-primario);
+            color: var(--color-terciario);
+        }
+
+        .btn-home:hover {
+            background-color: var(--color-cuarto);
+            color: var(--color-primario);
+        }
+    </style>
+</head>
+<body>
+    <div class="container text-center">
+        <h1 class="error-title">404</h1>
+        <p class="error-message">Lo sentimos, la página que estás buscando no fue encontrada.</p>
+        <a href="{% url 'libro-list' %}" class="btn btn-home mt-4"><i class="fas fa-home"></i> Volver al Inicio</a>
     </div>
 
-    <!-- Filtros -->
-    <form method="GET" class="form-inline mb-3">
-        <div class="row">
-            <!-- Filtrado por título -->
-            <div class="col-md-3">
-                <input type="text" name="buscar_titulo" class="form-control" placeholder="Título" value="{{ request.GET.buscar_titulo }}">
-            </div>
-    
-            <!-- Filtrado por categoría -->
-            <div class="col-md-3">
-                <select name="categoria" class="form-control">
-                    <option value="">Todas las categorías</option>
-                    {% for key, value in LIBRO_CATEGORIA %}
-                        <option value="{{ key }}" {% if request.GET.categoria == key %}selected{% endif %}>{{ value }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-    
-            <!-- Filtrado por autor -->
-            <div class="col-md-3">
-                <input type="text" name="buscar_autor" class="form-control" placeholder="Autor" value="{{ request.GET.buscar_autor }}">
-            </div>
-
-            <!-- Ordenamiento -->
-            <div class="col-md-3">
-                <select name="ordenar_por" class="form-control">
-                    <option value="">Ordenar por</option>
-                    <option value="cantidad_disponible" {% if request.GET.ordenar_por == 'cantidad_disponible' %}selected{% endif %}>Menos Disponibles</option>
-                    <option value="-cantidad_disponible" {% if request.GET.ordenar_por == '-cantidad_disponible' %}selected{% endif %}>Más Disponibles</option>
-                    <option value="cantidad_prestada" {% if request.GET.ordenar_por == 'cantidad_prestada' %}selected{% endif %}>Menos Prestados</option>
-                    <option value="-cantidad_prestada" {% if request.GET.ordenar_por == '-cantidad_prestada' %}selected{% endif %}>Más Prestados</option>
-                </select>
-            </div>
-            
-            <!-- Botones -->
-            <div class="col-md-12 text-center mt-3">
-                <button type="submit" class="btn btn-color">
-                    <i class="fas fa-search"></i> Buscar
-                </button>
-                <a href="{% url 'libro-list' %}" class="btn btn-color">
-                    <i class="fas fa-redo-alt"></i> Reiniciar
-                </a>
-            </div>
-
-        </div>
-    </form>
-
-    <!-- Tabla de libros -->
-    <table class="table table-striped text-center">
-        <thead class="secondary-color">
-            <tr>
-                <th scope="col">Título</th>
-                <th scope="col">Categoría</th>
-                <th scope="col">Autor</th>
-                <th scope="col">Disponibles</th>
-                <th scope="col">Prestados</th>
-                <th scope="col">Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for libro in libros %}
-            <tr>
-                <td><a href="{% url 'libro-detail' libro.id %}">{{ libro.titulo }}</a></td>
-                <td>{{ libro.get_categoria_display }}</td>
-                <td>{{ libro.autor }}</td>
-                <td>{{ libro.cantidad_disponible }}</td>
-                <td>{{ libro.cantidad_prestada }}</td>
-                <td>
-                    <a href="{% url 'libro-update' libro.id %}" class="btn btn-info btn-sm"><i class="fas fa-edit"></i></a>
-                    <a href="{% url 'libro-delete' libro.id %}" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="7" class="text-center">No hay libros disponibles.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <!-- Paginación -->
-    <div class="d-flex justify-content-between mt-4">
-        <div>
-            {% if libros.has_previous %}
-                <a href="?page={{ libros.previous_page_number }}" class="btn btn-color">
-                    <i class="fas fa-chevron-left"></i> Anterior
-                </a>
-            {% endif %}
-        </div>
-        <div>
-            <!-- Números de página -->
-            <nav aria-label="Page navigation">
-                <ul class="pagination">
-                    {% for num in libros.paginator.page_range %}
-                        {% if libros.number == num %}
-                            <li class="page-item active">
-                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                            </li>
-                        {% elif num > libros.number|add:'-5' and num < libros.number|add:'5' %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-            </nav>
-        </div>
-        <div>
-            {% if libros.has_next %}
-                <a href="?page={{ libros.next_page_number }}" class="btn btn-color">
-                    Siguiente <i class="fas fa-chevron-right"></i>
-                </a>
-            {% endif %}
-        </div>
-    </div>
-
-</div>
-
-{% endblock %}
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+</body>
+</html>
