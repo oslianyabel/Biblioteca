@@ -42,7 +42,7 @@
             background-color: var(--color-cuarto);
             color: var(--color-primario);
         }
-        p, b {  
+        p, b , footer a {  
             color: var(--color-terciario);
         }
         a {
@@ -115,7 +115,7 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg primary-color" id="nav-bar">
-        <b class="navbar-brand" style="color: var(--color-cuarto)">Bienvenido {{ user.username }} </b>
+        <b class="navbar-brand" style="color: var(--color-cuarto)">Bienvenid@ {{ user.username }} </b>
         <ul class="navbar-nav">
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'libro-list' %}"><i class="fas fa-book"></i> Libros</a>
@@ -150,7 +150,7 @@
 
     <footer class="primary-color">
         <p>Desarrollado por: <b>Dianely Hernández Bernal</b></p>
-        <p>Universidad Tecnológica de La Habana “José Antonio Echeverría” <b>Cujae</b></p>
+        <a href="https://cujae.edu.cu/">Universidad Tecnológica de La Habana “José Antonio Echeverría” Cujae</a>
         <p>Facultad de Ingeniería Informática</p>
         <p>Filial 10 de Octubre</p>
         <p>Sistema Web de Gestión de Préstamos</p>
