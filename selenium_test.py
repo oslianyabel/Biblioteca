@@ -58,8 +58,8 @@ def login():
         EC.presence_of_element_located((By.ID, "id_password"))
     )
 
-    username_input.send_keys(USER_IG)
-    password_input.send_keys(PASS_IG)
+    username_input.send_keys(USER)
+    password_input.send_keys(PASS)
 
     login_button = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.XPATH, "//button[@type='submit']"))
@@ -120,8 +120,8 @@ def logout():
 
 
 if __name__ == "__main__":
-    USER_IG = os.getenv("USER_IG")
-    PASS_IG = os.getenv("PASS_IG")
+    USER = os.getenv("USER")
+    PASS = os.getenv("PASS")
     driver = iniciar_chrome()
     while(True):
         login()
