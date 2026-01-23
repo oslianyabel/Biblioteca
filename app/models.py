@@ -60,14 +60,17 @@ class Estudiante(models.Model):
     
     @property
     def cantidad_prestamos(self):
+        # cantidad de préstamos del estudiante
         return self.prestamo_set.count() + self.listanegra_set.count()
     
     @classmethod
     def prestamos(cls):
+        # estudiantes que tienen al menos un préstamo
         return cls.objects.filter(prestamo__isnull=False).distinct()
     
     @classmethod
     def lista_negra(cls):
+        # estudiantes que están en lista negra
         return cls.objects.filter(listanegra__isnull=False).distinct()
     
     @classmethod

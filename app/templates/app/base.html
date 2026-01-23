@@ -88,6 +88,18 @@
         .navbar-nav .nav-item {
             margin-right: 20px; /* Ajusta este valor para aumentar o reducir la separación */
         }
+        /* Align logout form/button with other nav items */
+        .navbar-nav .nav-item form {
+            display: inline-flex;
+            align-items: center;
+            height: 100%;
+        }
+        .navbar-nav .nav-item form .nav-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            height: auto;
+        }
         /* Estilos para el spinner */
         .loader {
             position: fixed;
@@ -135,8 +147,13 @@
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'lista_negra-list' %}"><i class="fas fa-ban"></i> Lista Negra</a>
             </li>
-            <li class="nav-item"></li>
-                <a class="nav-link" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Salir</a>
+            <li class="nav-item">
+                <form id="logout-form" method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="nav-link btn btn-link">
+                        <i class="fas fa-sign-out-alt"></i> Salir
+                    </button>
+                </form>
             </li>
         </ul>
     </nav>
