@@ -148,12 +148,16 @@
                 <a class="nav-link" href="{% url 'lista_negra-list' %}"><i class="fas fa-ban"></i> Lista Negra</a>
             </li>
             <li class="nav-item">
-                <form id="logout-form" method="post" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="nav-link btn btn-link">
-                        <i class="fas fa-sign-out-alt"></i> Salir
-                    </button>
-                </form>
+                {% if user.is_authenticated %}
+                    <form id="logout-form" method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-link btn btn-link">
+                            <i class="fas fa-sign-out-alt"></i> Salir
+                        </button>
+                    </form>
+                {% else %}
+                    <a class="nav-link" href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>
+                {% endif %}
             </li>
         </ul>
     </nav>
